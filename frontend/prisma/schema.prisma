@@ -1,0 +1,91 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["debian-openssl-3.0.x", "windows"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id          String     @id @default(cuid()) @map("id") @db.VarChar(255)
+  description String     @db.Text
+  imageUrl    String     @db.VarChar(255)
+  name        String     @db.VarChar(255)
+  price       Int        @db.Int
+  stock       Int        @db.Int
+  createdAt   DateTime   @default(now()) @db.DateTime
+  updatedAt   DateTime   @default(now()) @updatedAt @db.DateTime
+  CartItem    CartItem[]
+
+  @@map("product")
+}
+
+model Cart {
+  id        String     @id @default(cuid()) @map("id") @db.VarChar(255)
+  items     CartItem[]
+  userId    String?    @db.VarChar(255)
+  user      User?      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now()) @db.DateTime
+  updatedAt DateTime   @updatedAt @default(now()) @db.DateTime
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String  @id @default(cuid()) @map("id") @db.VarChar(255)
+  productId String  @db.VarChar(255)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int     @db.Int
+  cartId    String  @db.VarChar(255)
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+
+  @@map("cartitems")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String  @db.VarChar(255)
+  type              String  @db.VarChar(255)
+  provider          String  @db.VarChar(255)
+  providerAccountId String  @db.VarChar(255)
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?    @db.Int
+  token_type        String? @db.VarChar(255)
+  scope             String? @db.VarChar(255)
+  id_token          String? @db.Text
+  session_state     String? @db.VarChar(255)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique @db.VarChar(255)
+  userId       String   @db.VarChar(255)
+  expires      DateTime @db.DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?   @db.VarChar(255)
+  email         String?   @unique @db.VarChar(255)
+  emailVerified DateTime? @db.DateTime
+  image         String?   @db.VarChar(255)
+  accounts      Account[]
+  sessions      Session[]
+  carts         Cart[]
+}
+
+model VerificationToken {
+  identifier String   @db.VarChar(255)
+  token      String   @unique @db.VarChar(255)
+  expires    DateTime @db.DateTime
+
+  @@unique([identifier, token])
+}

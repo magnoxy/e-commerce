@@ -1,0 +1,50 @@
+version: '3.2'
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - 80:3000
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend/src:/app/src
+    command: npm run dev
+
+  backend:
+    build: ./backend
+    ports:
+      - '3001:3000'
+    depends_on:
+      - mariadb
+      - redis
+    volumes:
+      - ./backend/src:/app/src
+    command: npm run start:dev
+    networks:
+      - kodigos
+
+  mariadb:
+    image: mariadb:10.3
+    container_name: kodigos_db
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=kodigos
+      - MYSQL_DATABASE=kodigos
+      - MYSQL_USER=kodigos
+      - MYSQL_PASSWORD=kodigos
+    networks:
+      - kodigos
+
+  redis:
+    image: redis:latest
+    container_name: kodigos_redis
+    ports:
+      - '6379:6379'
+    networks:
+      - kodigos
+      
+
+networks:
+  kodigos:
+    driver: bridge
