@@ -17,13 +17,13 @@ Para executar o projeto, siga estas etapas:
 2. Clone este repositório para sua máquina local:
  
     ```bash
-    git clone https://github.com/Nagawhos/kodigos-ecommerce
+    git clone https://github.com/magnoxy/e-commerce.git
     ```
  
 3. Navegue até o diretório do projeto:
  
     ```bash
-    cd kodigos-ecommerce
+    cd e-commerce
     ```
  
 4. Execute o comando a seguir para construir as imagens Docker:
