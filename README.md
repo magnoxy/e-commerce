@@ -1,4 +1,4 @@
-# Projeto Ecommerce Kodigos (Next.js + Nest.js)
+# Projeto Ecommerce (Next.js + Nest.js)
 
 Este é um projeto que utiliza Next.js para o frontend e Nest.js para o backend.
  
